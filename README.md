@@ -4,8 +4,6 @@
 
 **DUE: Friday, May 26 by 5:30pm**
 
-Create your own repo at: https://classroom.github.com/a/XbBPcBk8
-
 ## Introduction
 
 As a capstone project for Web Development, we're going to combine the various
