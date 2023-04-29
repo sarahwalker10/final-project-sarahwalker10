@@ -4,6 +4,8 @@
 
 **DUE: Friday, May 26 by 5:30pm**
 
+https://classroom.github.com/a/2bkB1hjf
+
 ## Introduction
 
 As a capstone project for Web Development, we're going to combine the various
