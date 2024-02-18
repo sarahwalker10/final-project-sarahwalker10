@@ -2,7 +2,7 @@
 
 40 points
 
-**DUE: Friday, May 26 by 5:30pm**
+**DUE: Friday, March 8 by 5:00pm**
 
 https://classroom.github.com/a/n_2yaB5D
 
@@ -74,8 +74,8 @@ submission any classmates you collaborated with and any materials you consulted.
 
 - Authenticated users can log out, change their username, and change their
   password
-- Authenticated users can see a list of all channels. For each channel, can see
-  how many unread messages the user has in that channel
+- Authenticated users can see a list of all channels. For each channel, they 
+  can see how many unread messages they have in that channel
 - Visiting a channel marks all messages in it as read, and all new messages
   posted to that channel while the user is in it are marked as read too
 - Check for new messages in the channel at least once every 500 ms. Stop
@@ -88,7 +88,8 @@ submission any classmates you collaborated with and any materials you consulted.
 - Parse image URLs that appear in messages and display the images at the end of
   the message. (Hint: you may use the web to help you find an appropriate
   regular expression)
-- Users can add an emoji reaction to any message or reply
+- Users can add an emoji reaction to any message or reply. You may choose a 
+  limited set of emoji reactions you support.
 - Hovering over a reaction displays all the users who had that reaction
 
 ### Single-Page State (5 points)
@@ -164,13 +165,13 @@ Narrow Screens:
 
 - Give API endpoints a unique path namespace to distinguish them from your HTML
   path(s) e.g. `/api/endpoint1`, `/api/encpoint2` etc
-- Authentication endpoint that accepts a username and password, and returns a
-  session token
+- Create an authentication endpoint that accepts a username and password, and 
+  returns a session token
 - Authenticate to other endpoints via session token in the request header (not
   as a URL param or in a request body)
 - Use GET requests for API calls that don't change data on the server, and POST
   requests for API calls that **do** change data on the server
-- Endpoints to create and get channels and messages, and to update a user's last
+- Create endpoints to create and get channels and messages, and to update a user's last
   read message in a channel
-- Endpoint to return unread message counts for the user for each channel in a
+- Create an endpoint to return unread message counts for the user for each channel in a
   single request with a single database query
