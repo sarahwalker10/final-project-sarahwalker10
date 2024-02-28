@@ -1,0 +1,104 @@
+<html>
+<head>
+  <title>Belay Final Project Sarah Walker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <!-- <link rel="stylesheet" type="text/css" href="/static/style.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="style.css"></link>
+</head>
+<body>
+
+<!-- Unauthenticated UI - "/" -->
+    <div class="splash container" id="loggedOut">
+        <div class="hero">
+          <div class="logo">
+            <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
+            <img id="belay-logo" src="belay-logo.jpg">
+          </div>
+          <h1>Belay</h1>
+          <h2>Chat Channels</h2>
+          <div class="button-container">
+            <button class="signup">Signup</button> 
+            <button class="login">Login</button>
+          </div>
+        </div> 
+    </div> <!-- end .splash -->
+
+
+<!-- Profile Page - "/profile" -->
+    <div class="profile">
+        <div class="hero">
+            <div class="logo">
+              <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
+              <img id="belay-logo" src="belay-logo.jpg">
+            </div>
+            <h1>Belay</h1>
+            <h2>Chat Channels</h2>
+        </div>
+        <div class="header">
+            Welcome to Your Profile, <span class="username" id="profile-username"></span>!
+            <!-- input = Username -->
+        </div>
+        <div class="auth container">
+            <div class="alignedForm">
+            <div class="inputs">
+                <label for="username">Enter New Username: </label>
+                <input name="username" id="name-set" value="">
+                <button id="updateUser">update</button>
+            </div>
+            <br>
+            <div class ="inputs">
+                <label for="password">Enter New Password: </label>
+                <input type="password" name="password" id="pw-set" value="">
+                <button id="updatePassword">update</button>
+            </div>
+            <br>
+            <button class="exit return">Return to Channels</button>
+            <br>
+            <button class="exit logout" id="log-out">Log out</button>
+            </div>
+        </div>
+    </div>  <!-- end .profile -->
+  
+
+<!-- Login Page - "/login" -->
+    <div class="login"> 
+      <div class="hero">
+        <div class="logo">
+          <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
+          <img id="belay-logo" src="belay-logo.jpg">
+        </div>
+        <h1>Belay</h1>
+        <h2>Chat Channels</h2>
+      </div>
+      <div class="header">
+        Enter Your Username and Password to Login:
+      </div>
+      <div class="auth container">
+          <div class="alignedForm">
+          <div class="inputs">
+              <label for="username">Username: </label>
+              <input name="username" id = "login-username" value="">
+          </div>
+          <br>
+          <div class ="inputs">
+              <label for="password">Password: </label>
+              <input type="password" name="password" id="login-pw" value="">
+              <button class="go-button">Login!</button>
+          </div>
+          <br>
+          <div class="failed hide">
+            <div class="message">
+              Oops, that account doesn't exist! Signup to get started:
+            </div>
+            <button class="new">Signup</button>
+          </div>
+          </div>
+      </div>
+    </div> <!-- end .login -->
+
+<script src="/static/script.js"> </script>
+</body>
+</html> 
