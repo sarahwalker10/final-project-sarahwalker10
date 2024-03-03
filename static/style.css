@@ -28,19 +28,6 @@ body {
     /* border-bottom: 3px solid darkgreen; */
   }
 
-/* .hero h3 {
-    display: block;
-    grid-column: 1/3;
-    grid-row: 1/3;
-    z-index: 4;
-    margin: auto;
-    margin-right: 30px;
-    
-  
-    font-size: 40px;
-    color: white;
-    text-shadow: 0px 0px 20px orange, 0px 0px 40px darkgreen;
-  } */
 
 .logo img {
     float:right;
@@ -172,6 +159,7 @@ h3 {
   height: 120px;
   margin-left: 5px;
   margin-bottom: 10px;
+  margin-right:auto;
 }
 
 .top-header {
@@ -186,7 +174,7 @@ h3 {
 .top-header h4 {
   /* margin-top: 30px;
   margin-bottom: 30px; */
-  font-size: 40px;
+  font-size: 30px;
   color: rgb(255, 119, 0);
   text-shadow: 0.5px 0.5px 4px orange;
   margin-right: 10px;
@@ -210,7 +198,7 @@ h3 {
 
 
 
-/* style for the two-column chat page */
+/* style for the chat pages */
 
 .page-container div {
   border-radius: 5px;
@@ -232,27 +220,40 @@ h3 {
   background-color: whitesmoke;
   border: None;
   font-size: 45px;
+  font-family: American Typewriter, serif;
   color: rgb(255, 119, 0);
-  text-shadow: 0.5px 0.5px 4px orange;
+  text-shadow: 2px 2px 7px orange;
   margin-bottom: -10px;
+  font-weight: bold;
+  align-self: end;
 }
+
 
 .page-container div.channel-option {
   color: rgb(1, 76, 56);
   background-color: whitesmoke;
   border: 2px solid rgb(1, 76, 56);
-  font-family: American Typewriter, serif;
+  /* font-family: American Typewriter, serif; */
 }
 
 .page-container div.channel-option:hover {
   background-color: lightgray;
 }
-.page-container div.channel-option#selected {
+
+.page-container div#selected, button.selected-thread {
   background-color: orange;
-  border: 2px solid rgb(1, 76, 56);
+  border: 1px solid rgb(1, 76, 56);
   box-shadow: 0 0 5px 3px rgb(255, 119, 0);
 }
-.page-container {
+.replies .page-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: repeat(1, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.channels .page-container {
   display: grid;
   grid-template-columns: 1fr 3fr;
   grid-template-rows: repeat(1, 1fr);
@@ -270,7 +271,7 @@ name {
 }
 
 message author {
-  color: rgb(186, 176, 236);
+  color: rgb(1, 76, 56);
   font-size:20px;
   font-weight: bold;
   display: block;
@@ -285,29 +286,25 @@ message content {
 }
 
 hr {
-  border-color: rgb(186, 176, 236);
+  border-color: rgb(1, 76, 56);
 }
 
 
-.page-container div.footer {
-  background-color: whitesmoke;
-  border: None;
-  margin-left: 35px;
-  margin-top:20px;
-}
+/* message#post-section1, message#post-section2 {
+  margin-top: 100px;
+} */
 
-#post-box {
+#post-box1,  #post-box2{
   height:50px;
   width: 100%;
   position: relative;
 }
 
-#post-button {
-  background-color: rgb(186, 176, 236);
+#post-button1,  #post-button2 {
   float:right;
-  padding:7px;
-  font-size:13px;
+  font-size:15px;
   margin-top: 5px;
+  
 }
 
 button.reaction {
@@ -318,6 +315,66 @@ button.reaction {
   border-radius: 70%
 }
 
+#create-channel {
+  background-color: rgb(186, 176, 236);
+  font-size:20px;
+  margin-top: 10px;
+}
+
+.page-container .open-thread {
+  background-color: rgb(186, 176, 236);
+  border:None;
+}
+
+
+
+button.reaction#exit-threads {
+  color: rgb(255, 119, 0);
+  font-weight: bold;
+  border-color: rgb(255, 119, 0);
+  font-weight:bold;
+  float:right;
+  margin-bottom: 10px;
+  width: auto;
+  height: 30px;
+  border-radius: 70%
+}
+
+#reply-button  {
+  float: right;
+  margin-top: 5px;
+}
+
+.page-container div#thread-title {
+  background-color: whitesmoke;
+  margin-bottom: -15px;
+  border-color: rgb(186, 176, 236);
+}
+
+small {
+  font-family: American Typewriter, serif;
+  font-size: 25px;
+  color: rgb(255, 119, 0);
+  text-shadow: 2px 2px 7px orange;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#reply-box {
+  height:50px;
+  width: 100%;
+  position: relative;
+  margin-top: 15px;
+}
+
+left {
+  font-size: 23px;
+  color: rgb(186, 176, 236);
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-family: American Typewriter, serif;
+}
 
 
 
