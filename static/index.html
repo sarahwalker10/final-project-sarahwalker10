@@ -5,340 +5,342 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-  <!-- <link rel="stylesheet" type="text/css" href="/static/style.css"></link> -->
-  <link rel="stylesheet" type="text/css" href="style.css"></link>
+  <link rel="stylesheet" type="text/css" href="/static/style.css"></link>
 </head>
 <body>
 
 <!-- Unauthenticated UI - "/" -->
-    <div class="splash container" id="loggedOut">
-        <div class="hero">
-          <div class="logo">
-            <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
-            <img id="belay-logo" src="belay-logo.jpg">
-          </div>
-          <h1>Belay</h1>
-          <!-- <h3>Chat Channels</h3> -->
-          <div class="button-container">
-            <button class="signup">Signup</button> 
-            <button class="login">Login</button>
-          </div>
-        </div> 
-    </div> <!-- end .splash -->
+<div class="splash container" id="loggedOut">
+    <div class="hero">
+      <div class="logo">
+        <img src="/static/belay-logo.jpg">
+      </div>
+      <h1>Belay</h1>
+      <!-- <h3>Chat Channels</h3> -->
+      <div class="button-container">
+        <button class="signup">Signup</button> 
+        <button class="login-button">Login</button>
+      </div>
+    </div> 
+</div> <!-- end .splash -->
 
 
 <!-- Profile Page - "/profile" -->
-    <div class="profile">
-        <div class="hero">
-            <div class="logo">
-              <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
-              <img id="belay-logo" src="belay-logo.jpg">
-            </div>
-            <h2>Belay</h2>
-            <!-- <h3>Chat Channels</h3> -->
-        </div>
-        <div class="header">
-            Welcome to Your Profile, <span class="username" id="profile-username"></span>!
-            <!-- input = Username -->
-        </div>
-        <div class="auth container">
-            <div class="alignedForm">
-            <div class="inputs">
-                <label for="username">Change Username: </label>
-                <input name="username" id="name-set" value="">
-                <button id="updateUser">update</button>
-            </div>
-            <br>
-            <div class ="inputs">
-                <label for="password">Change Password: </label>
-                <input type="password" name="password" id="pw-set" value="">
-                <button id="updatePassword">update</button>
-            </div>
-            <br>
-            <button class="exit return">Return to Channels</button>
-            <br>
-            <button class="exit logout" id="log-out">Log out</button>
-            </div>
-        </div>
-    </div>  <!-- end .profile -->
-  
-
-<!-- Login Page - "/login" -->
-    <div class="login"> 
+<div class="profile">
+    <div id="profile-page"> 
       <div class="hero">
-        <div class="logo">
-          <!-- <img id="belay-logo" src="/static/belay-logo.jpeg"> -->
-          <img id="belay-logo" src="belay-logo.jpg">
-        </div>
-        <h2>Belay</h2>
-        <!-- <h3>Chat Channels</h3> -->
+          <div class="logo">
+            <img src="/static/belay-logo.jpg">
+          </div>
+          <h2>Belay</h2>
+          <!-- <h3>Chat Channels</h3> -->
       </div>
       <div class="header">
-        Enter Your Username and Password to Login:
+          Welcome to Your Profile, <span class="username" id="profile-username"></span>!
+          <!-- input = Username -->
       </div>
       <div class="auth container">
           <div class="alignedForm">
           <div class="inputs">
-              <label for="username">Username: </label>
-              <input name="username" id = "login-username" value="">
+              <label for="username">Change Username: </label>
+              <input name="username" id="name-set" value="">
+              <button id="updateUser">update</button>
           </div>
           <br>
           <div class ="inputs">
-              <label for="password">Password: </label>
-              <input type="password" name="password" id="login-pw" value="">
-              <button class="go-button">Login!</button>
+              <label for="password">Change Password: </label>
+              <input type="password" name="password" id="pw-set" value="">
+              <button id="updatePassword">update</button>
           </div>
           <br>
-          <div class="failed hide">
-            <div class="message">
+          <button class="exit return" id="go-back">Return to Channels</button>
+          <br>
+          <button class="exit logout" id="log-out">Log out</button>
+          </div>
+      </div>
+    </div> 
+</div>  <!-- end .profile -->
+
+
+<!-- Login Page - "/login" -->
+<div class="login"> 
+  <div id="login-page">
+    <div class="hero">
+      <div class="logo">
+        <img src="/static/belay-logo.jpg">
+      </div>
+      <h2>Belay</h2>
+      <!-- <h3>Chat Channels</h3> -->
+    </div>
+    <div class="header">
+      Enter Your Username and Password to Login:
+    </div>
+    <div class="auth container">
+        <div class="alignedForm">
+        <div class="inputs">
+            <label for="username">Username: </label>
+            <input id="login-username" value="">
+        </div>
+        <br>
+        <div class ="inputs">
+            <label for="password">Password: </label>
+            <input type="password" id="login-pw" value="">
+            <button class="go-button">Login!</button>
+        </div>
+        <br>
+        <div class="oops">
+          <div class="failed">
+            <div class="message hide">
               Oops, that account doesn't exist! Signup to get started:
             </div>
             <button class="new">Signup</button>
           </div>
-          </div>
-      </div>
-    </div> <!-- end .login -->
+        </div>
+        </div>
+    </div>
+  </div>
+</div> <!-- end .login -->
 
-    <!-- Two column channels page -->
-    <div class = "channels"> 
-      <div class = "top-header">
-          <h3>Belay</h3>
-          <img class="small-logo" src="belay-logo.jpg">
-          <h4>Hi <span class="username" id="profile-username">User 3785746</span>!</h4>
-          <button class="profile-button">Edit Profile</button>
-      </div>
+<!-- Two column channels page -->
+<div class = "channels"> 
+  <div class = "top-header">
+      <h3>Belay</h3>
+      <img class="small-logo" src="/static/belay-logo.jpg">
+      <h4>Hi <span class="username" id="two-username"></span>!</h4>
+      <button id="profile-button1">Edit Profile</button>
+  </div>
 
-      <div class="page-container">
-          <div class="descriptions">  </div>
-          <div class="descriptions"> Channel Name </div>
-          <div>
-            <left> Select a Channel: </left>
-            <br>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option" id="selected">
-              <name> Channel 4 </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <button id="create-channel"> &#x2795</button>
-          </div>
-          
-          <div class="right">
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <button class="reaction" id="heart"> 0 &#x2764; </button>
-              <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
-              <button class="reaction" id="happyface"> 5 &#x1F600; </button>
-              <button class="reaction" id="laughing"> 2 &#x1F602; </button>
-              <button class="reaction" id="star"> 2 &#x2B50; </button>
-              <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <hr>
-            </message>
-            <br>
-            <textarea id="post-box1" name="comment" placeholder= "Add a chat to this channel"></textarea>
-            <br>
-            <button id="post-button1">Post Message</button>
-          </div>
-        
-      </div>
-    </div> <!-- end .channels -->
-
-
-    <!-- Three column channels page -->
-    <div class = "replies">
-      <div class = "top-header">
-        <h3>Belay</h3>
-        <img class="small-logo" src="belay-logo.jpg">
-        <h4>Hi <span class="username" id="profile-username">User 3785746</span>!</h4>
-        <button class="profile-button">Edit Profile</button>
+  <div class="page-container">
+      <div class="descriptions">  </div>
+      <div class="descriptions" id="name-2col"> Channel Name </div>
+      <div id="channels-2col">
+        <left> Select a Channel: </left>
+        <br>
+        <!-- <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option" id="selected">
+          <name> Channel 4 </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div> -->
+        <button id="create-channel"> &#x2795</button>
       </div>
       
-      <div class="page-container">
-          <div class="descriptions">  </div>
-          <div class="descriptions"> Channel Name </div>
-
-          <div id="thread-title"> 
-            <button class="reaction" id="exit-threads"> &#x274C; </button>
-            <small> Replies To </small>
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button class="reaction" id="heart"> 0 &#x2764; </button>
-              <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
-              <button class="reaction" id="happyface"> 5 &#x1F600; </button>
-              <button class="reaction" id="laughing"> 2 &#x1F602; </button>
-              <button class="reaction" id="star"> 2 &#x2B50; </button>
-              <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
-              <br>
-            </message>
-          </div>
-
-          <div>
-            <left> Select a Channel: </left>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option" id="selected">
-              <name> Channel 4 </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <div class="channel-option">
-              <name> Channel Name </name>
-              <br>
-              <unread> 3 unread </unread>
-            </div>
-            <button id="create-channel"> &#x2795</button>
-          </div>
-          
-          <div class="right">
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <button class="reaction" id="heart"> 0 &#x2764; </button>
-              <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
-              <button class="reaction" id="happyface"> 5 &#x1F600; </button>
-              <button class="reaction" id="laughing"> 2 &#x1F602; </button>
-              <button class="reaction" id="star"> 2 &#x2B50; </button>
-              <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button class = "selected-thread"> 3 replies </button>
-              <hr>
-            </message>
-        
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button> 3 replies </button>
-              <hr>
-            </message>
-            <br>
-            <textarea id="post-box2" name="comment" placeholder= "Add a chat to this channel"></textarea>
-            <br>
-            <button id="post-button2">Post Message</button>
-          </div>
-
-          <div class="open-thread">
-            
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <hr>
-            </message>
-
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <hr>
-            </message>
-
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <hr>
-            </message>
-
-            <message>
-              <author> Jem</author>
-              <content> What's up!!</content>
-              <img>
-              <button class="reaction" id="heart"> 0 &#x2764; </button>
-              <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
-              <button class="reaction" id="happyface"> 5 &#x1F600; </button>
-              <button class="reaction" id="laughing"> 2 &#x1F602; </button>
-              <button class="reaction" id="star"> 2 &#x2B50; </button>
-              <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
-              <hr>
-            </message>
-
-            <message> 
-              <textarea id="reply-box" name="comment" placeholder= "Add a reply to the thread"></textarea>
-              <button id="reply-button">Post Reply</button>
-            </message>
-            
-            
-          </div> 
+      <div class="right">
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <button class="reaction" id="heart"> 0 &#x2764; </button>
+          <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
+          <button class="reaction" id="happyface"> 5 &#x1F600; </button>
+          <button class="reaction" id="laughing"> 2 &#x1F602; </button>
+          <button class="reaction" id="star"> 2 &#x2B50; </button>
+          <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <hr>
+        </message>
+        <br>
+        <textarea id="post-box1" name="comment" placeholder= "Add a chat to this channel"></textarea>
+        <br>
+        <button id="post-button1">Post Message</button>
       </div>
-    </div> <!-- end .replies -->
+    
+  </div>
+</div> <!-- end .channels -->
+
+
+<!-- Three column channels page -->
+<div class = "threads">
+  <div class = "top-header">
+    <h3>Belay</h3>
+    <img class="small-logo" src="/static/belay-logo.jpg">
+    <h4>Hi <span class="username" id="three-username"></span>!</h4>
+    <button id="profile-button2">Edit Profile</button>
+  </div>
+  
+  <div class="page-container">
+      <div class="descriptions">  </div>
+      <div class="descriptions" id="name-3col"> Channel Name </div>
+
+      <div id="thread-title"> 
+        <button class="reaction" id="exit-threads"> &#x274C; </button>
+        <small> Replies To </small>
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button class="reaction" id="heart"> 0 &#x2764; </button>
+          <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
+          <button class="reaction" id="happyface"> 5 &#x1F600; </button>
+          <button class="reaction" id="laughing"> 2 &#x1F602; </button>
+          <button class="reaction" id="star"> 2 &#x2B50; </button>
+          <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
+          <br>
+        </message>
+      </div>
+
+      <div id="channels-3col">
+        <left> Select a Channel: </left>
+        <!-- <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option" id="selected">
+          <name> Channel 4 </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div>
+        <div class="channel-option">
+          <name> Channel Name </name>
+          <br>
+          <unread> 3 unread </unread>
+        </div> -->
+        <button id="create-channel"> &#x2795</button>
+      </div>
+      
+      <div class="right">
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <button class="reaction" id="heart"> 0 &#x2764; </button>
+          <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
+          <button class="reaction" id="happyface"> 5 &#x1F600; </button>
+          <button class="reaction" id="laughing"> 2 &#x1F602; </button>
+          <button class="reaction" id="star"> 2 &#x2B50; </button>
+          <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button class = "selected-thread"> 3 replies </button>
+          <hr>
+        </message>
+    
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button> 3 replies </button>
+          <hr>
+        </message>
+        <br>
+        <textarea id="post-box2" name="comment" placeholder= "Add a chat to this channel"></textarea>
+        <br>
+        <button id="post-button2">Post Message</button>
+      </div>
+
+      <div class="open-thread">
+        
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <hr>
+        </message>
+
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <hr>
+        </message>
+
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <hr>
+        </message>
+
+        <message>
+          <author> Jem</author>
+          <content> What's up!!</content>
+          <img>
+          <button class="reaction" id="heart"> 0 &#x2764; </button>
+          <button class="reaction" id="thumbsup"> 5 &#x1F44D; </button>
+          <button class="reaction" id="happyface"> 5 &#x1F600; </button>
+          <button class="reaction" id="laughing"> 2 &#x1F602; </button>
+          <button class="reaction" id="star"> 2 &#x2B50; </button>
+          <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
+          <hr>
+        </message>
+
+        <message> 
+          <textarea id="reply-box" name="comment" placeholder= "Add a reply to the thread"></textarea>
+          <button id="reply-button">Post Reply</button>
+        </message>
+        
+        
+      </div> 
+  </div>
+</div> <!-- end .threads -->
 
 <script src="/static/script.js"> </script>
 </body>
