@@ -7,7 +7,9 @@ const THREADS = document.querySelector(".threads");
 
 window.addEventListener("DOMContentLoaded", ()=>{
     loadEventListeners();
-    sessionStorage.setItem("message_id", 0)
+    sessionStorage.setItem("message_id", "0")
+    sessionStorage.setItem("channel_name", "")
+    sessionStorage.setItem("channel_id", "0")
     navigateTo(window.location.pathname);
 })
 
@@ -87,14 +89,16 @@ function router(path) {
     else if (path_list[1] == "channels") { 
         console.log(sessionStorage.getItem("user_name"))
         document.querySelector("#two-username").textContent = sessionStorage.getItem("user_name")
-        buildChannels("channels-2col");
         showOnly(CHANNELS); 
+        pollForChannels();
+        pollForMessages();
     }
     // open threads page
     else if (path_list[1] == "threads") { 
         document.querySelector("#three-username").textContent= sessionStorage.getItem("user_name")
-        buildChannels("channels-3col");
         showOnly(THREADS); 
+        pollForChannels();
+        pollForMessages();
     } 
     // page not found
     else {
@@ -114,13 +118,22 @@ function loadEventListeners() {
     // "channels" page:
     // 1. edit profile button
     document.querySelector("#profile-button1").addEventListener("click", (event) =>{
-        sessionStorage.setItem("message_id", 0)
         navigateTo("/profile")})
+    // 2. when people click the + button to create a new channel
+    document.querySelector("#create-channel1").addEventListener("click", (event) => {
+        document.querySelector("#un-hide1").classList.remove("hide")
+    })
+    // 3. after people click the "create channel" button to save new channel
+    document.querySelector("#hit-enter1").addEventListener("click", (event) => {
+        event.preventDefault();
+        channel_name = document.querySelector("#channel-set1").value;
+        createNewChannel(channel_name, "two");
+        document.querySelector("#un-hide1").classList.add("hide")
+    })
 
     // "threads" page:
     // 1. edit profile button
     document.querySelector("#profile-button2").addEventListener("click", (event) =>{
-        sessionStorage.setItem("message_id", 0)
         navigateTo("/profile")})
 
     // "profile" page:
@@ -271,9 +284,155 @@ function loginSignUp(event) {
 
 
 // create the left-hand column which displays the list of channels
-function buildChannels(id) {
-    q="#"+id
-    let block = document.querySelector(q)
-    // left_block.innerHTML = ""
-    console.log("WRITE THIS")
+function buildChannels(url) {
+    if (url=="channels")  {
+        fetch(`/api/channels`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "user-id": sessionStorage.getItem("user_id"),
+            "get-type": "list-channels"
+        },
+        }).then(response => response.json())
+        .then(info => {
+        let block = document.querySelector("#channels-2col");
+        block.innerHTML = "";
+        if (info[0] == "no channels") {
+            return
+        }
+        else { 
+            info.forEach(item => {
+                const channel_name = item.channel_name
+                const channel_id = item.channel_id
+                
+                const div = document.createElement("div");
+                if (channel_id == sessionStorage.getItem("channel_id")) {
+                    div.setAttribute("id", "selected")
+                }
+                div.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    sessionStorage.setItem("channel_id", channel_id);
+                    sessionStorage.setItem("channel_name", channel_name);
+                })
+                div.classList.add("channel-option")
+                div.setAttribute("number", channel_id)
+                const name = document.createElement("name");
+                name.innerHTML = channel_name;
+                const space = document.createElement("br");
+                // ADD UNREAD
+
+                div.appendChild(name);
+                div.appendChild(space);
+                block.appendChild(div);
+                
+            })}})   
+    } 
+    
+    
+    if (url=="threads")  {
+        fetch(`/api/threads`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "user-id": sessionStorage.getItem("user_id"),
+            "get-type": "list-channels"
+        },
+        }).then(response => response.json())
+        .then(info => {
+        let block = document.querySelector("#channels-3col");
+        block.innerHTML = "";
+        if (info[0] == "no channels") {
+            return
+        }
+        else { 
+            info.forEach(item => {
+                const channel_name = item.channel_name
+                const channel_id = item.channel_id
+                
+                const div = document.createElement("div");
+                if (channel_id == sessionStorage.getItem("channel_id")) {
+                    div.setAttribute("id", "selected")
+                }
+                div.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    sessionStorage.setItem("channel_id", channel_id);
+                    sessionStorage.setItem("channel_name", channel_name);
+                })
+                div.classList.add("channel-option")
+                div.setAttribute("number", channel_id)
+                const name = document.createElement("name");
+                name.innerHTML = channel_name;
+                const space = document.createElement("br");
+                // ADD UNREAD
+
+                div.appendChild(name);
+                div.appendChild(space);
+                block.appendChild(div);
+                
+            })}})   
+    }     
+}
+
+
+function createNewChannel(channel_name, page) {
+    if (page == "two") {
+        fetch(`/api/channels`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "new-name": channel_name
+            },
+            }).then(response => { if (response.status == 200) {
+            console.log("your channel has been saved")
+            }
+            else {console.log("not valid")}})
+    }
+
+    if (page == "three") {
+        fetch(`/api/threads`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "new-name": channel_name
+            },
+            }).then(response => { if (response.status == 200) {
+            console.log("your channel has been saved")
+            }
+            else {console.log("not valid")}})
+    }
+
+}
+
+
+
+
+
+function pollForChannels() {
+    let intervalId = setInterval(() => {
+        if (window.location.pathname.split('/')[1] == "channels") {
+            buildChannels("channels");
+        } 
+        else if (window.location.pathname.split('/')[1] == "threads") {
+            buildChannels("threads");
+        } 
+        else {
+          clearInterval(intervalId);
+          return;
+        }
+      }, 1000);
+}
+
+function pollForMessages() {
+    let intervalId2 = setInterval(() => {
+        if (window.location.pathname.split('/')[1] === "channels" || window.location.pathname.split('/')[1] === "threads") {  
+            if (sessionStorage.getItem("channel_id") != "0") {
+                document.querySelector("#name-2col").innerHTML = sessionStorage.getItem("channel_name")
+                document.querySelector("#name-3col").innerHTML = sessionStorage.getItem("channel_name")
+                // buildMessages(window.location.pathname.split('/')[1]);
+            } }
+        else {
+          clearInterval(intervalId2);
+          return;
+        }
+      }, 1000);
 }

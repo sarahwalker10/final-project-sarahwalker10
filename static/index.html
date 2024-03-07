@@ -112,11 +112,14 @@
 
   <div class="page-container">
       <div class="descriptions">  </div>
-      <div class="descriptions" id="name-2col"> Channel Name </div>
-      <div id="channels-2col">
+      <div class="descriptions" id="name-2col"> </div>
+      <div>
         <left> Select a Channel: </left>
         <br>
-        <!-- <div class="channel-option">
+        <inside id="channels-2col">
+
+        </inside>
+        <!-- <div class="channel-option" number="1">
           <name> Channel Name </name>
           <br>
           <unread> 3 unread </unread>
@@ -141,11 +144,15 @@
           <br>
           <unread> 3 unread </unread>
         </div> -->
-        <button id="create-channel"> &#x2795</button>
+        <button id="create-channel1"> &#x2795</button>
+        <div id="un-hide1" class= "hide">
+          <input id="channel-set1" value="" placeholder="Enter the new channel name">
+          <button id="hit-enter1"> Create Channel</button>
+        </div>
       </div>
       
-      <div class="right">
-        <message>
+      <div class="right" id="messages-2col">
+        <!-- <message>
           <author> Jem</author>
           <content> What's up!!</content>
           <img>
@@ -181,11 +188,14 @@
           <img>
           <button> 3 replies </button>
           <hr>
-        </message>
-        <br>
+        </message> -->
+        
+
+
+        <!-- <br>
         <textarea id="post-box1" name="comment" placeholder= "Add a chat to this channel"></textarea>
         <br>
-        <button id="post-button1">Post Message</button>
+        <button id="post-button1">Post Message</button> -->
       </div>
     
   </div>
@@ -203,7 +213,7 @@
   
   <div class="page-container">
       <div class="descriptions">  </div>
-      <div class="descriptions" id="name-3col"> Channel Name </div>
+      <div class="descriptions" id="name-3col"> </div>
 
       <div id="thread-title"> 
         <button class="reaction" id="exit-threads"> &#x274C; </button>
@@ -222,23 +232,11 @@
         </message>
       </div>
 
-      <div id="channels-3col">
+      <div >
         <left> Select a Channel: </left>
-        <!-- <div class="channel-option">
-          <name> Channel Name </name>
-          <br>
-          <unread> 3 unread </unread>
-        </div>
-        <div class="channel-option">
-          <name> Channel Name </name>
-          <br>
-          <unread> 3 unread </unread>
-        </div>
-        <div class="channel-option">
-          <name> Channel Name </name>
-          <br>
-          <unread> 3 unread </unread>
-        </div>
+        <inside id="channels-3col"> 
+          <!-- 
+        
         <div class="channel-option" id="selected">
           <name> Channel 4 </name>
           <br>
@@ -249,7 +247,12 @@
           <br>
           <unread> 3 unread </unread>
         </div> -->
-        <button id="create-channel"> &#x2795</button>
+        </inside>
+        <button id="create-channel2"> &#x2795</button>
+        <div>
+          <input id="channel-set2" value="" placeholder="Enter the new channel name">
+          <button id="hit-enter2"> Create Channel</button>
+        </div>
       </div>
       
       <div class="right">

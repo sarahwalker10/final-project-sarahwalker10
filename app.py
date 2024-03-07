@@ -158,5 +158,85 @@ def update_profile():
         return jsonify({})
 
 
+#POST a new channel
+#GET a list of channels
+@app.route('/api/channels', methods = ["POST", "GET"])
+def twoColumnPage():   
+    if request.method == "POST":
+        new_channel = request.headers.get('new-name')
+        print(new_channel)
+        #save the new message into the database
+        db = get_db()
+        cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
+        db.commit()
+        cursor.close()
+        return {}
+    elif request.method == "GET":
+        if request.headers.get("get-type") == "list-channels":
+            channels_list = query_db("SELECT * FROM channels")
+            if channels_list is None:
+                return jsonify([{"no channels"}])
+            
+            list_of_channels = []
+            for row in channels_list:
+                row_dict = {}
+
+                if isinstance(row["channel_id"], bytes):
+                    channel_id = row["channel_id"].decode('utf-8')
+                else:
+                    channel_id = row["channel_id"]
+
+                if isinstance(row["channel_name"], bytes):
+                    channel_name = row["channel_name"].decode('utf-8')
+                else:
+                    channel_name = row["channel_name"]
+
+                row_dict["channel_id"] = channel_id
+                row_dict["channel_name"] = channel_name
+
+                list_of_channels.append(row_dict)
+            return jsonify(list_of_channels)
+
+#GET list of channels
+#POST a new channel
+@app.route('/api/threads', methods = ["POST", "GET"])
+def threeColumnPage():   
+    if request.method == "POST":
+        new_channel = request.headers.get('new-name')
+        print(new_channel)
+        #save the new message into the database
+        db = get_db()
+        cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
+        db.commit()
+        cursor.close()
+        return {}
+    elif request.method == "GET":
+        if request.headers.get("get-type") == "list-channels":
+            channels_list = query_db("SELECT * FROM channels")
+            if channels_list is None:
+                return jsonify([{"no channels"}])
+            
+            list_of_channels = []
+            for row in channels_list:
+                row_dict = {}
+
+                if isinstance(row["channel_id"], bytes):
+                    channel_id = row["channel_id"].decode('utf-8')
+                else:
+                    channel_id = row["channel_id"]
+
+                if isinstance(row["channel_name"], bytes):
+                    channel_name = row["channel_name"].decode('utf-8')
+                else:
+                    channel_name = row["channel_name"]
+
+                row_dict["channel_id"] = channel_id
+                row_dict["channel_name"] = channel_name
+
+                list_of_channels.append(row_dict)
+            return jsonify(list_of_channels)
+
+
+
 current_datetime = datetime.now()
 iso_timestamp = current_datetime.isoformat()
