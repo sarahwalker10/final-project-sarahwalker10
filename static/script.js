@@ -47,6 +47,11 @@ function navigateTo(path) {
         router("/login")
     }
 
+    else if (sessionStorage.getItem("message_id")==0 && path=="/threads") {
+        history.pushState({}, "", "/channels")
+        router("/channels")
+    }
+
     else {
         router(path)
     }
@@ -87,7 +92,7 @@ function router(path) {
     }
     // channel page
     else if (path_list[1] == "channels") { 
-        console.log(sessionStorage.getItem("user_name"))
+        sessionStorage.setItem("message_id", 0)
         document.querySelector("#two-username").textContent = sessionStorage.getItem("user_name")
         showOnly(CHANNELS); 
         pollForChannels();
@@ -130,11 +135,46 @@ function loadEventListeners() {
         createNewChannel(channel_name, "two");
         document.querySelector("#un-hide1").classList.add("hide")
     })
+    // 4. the post button
+    document.querySelector("#post-button1").addEventListener("click", (event) => {
+        event.preventDefault();
+        postMessage("/channels");
+        document.querySelector("#post-box1").value = ""
+    })
 
     // "threads" page:
     // 1. edit profile button
     document.querySelector("#profile-button2").addEventListener("click", (event) =>{
         navigateTo("/profile")})
+    // 2. when people click the + button to create a new channel
+    document.querySelector("#create-channel2").addEventListener("click", (event) => {
+        document.querySelector("#un-hide2").classList.remove("hide")
+    })
+    // 3. after people click the "create channel" button to save new channel
+    document.querySelector("#hit-enter2").addEventListener("click", (event) => {
+        event.preventDefault();
+        channel_name = document.querySelector("#channel-set2").value;
+        createNewChannel(channel_name, "three");
+        document.querySelector("#un-hide2").classList.add("hide")
+    })
+    // 4. X button to close out the replies plane
+    document.querySelector("#exit-threads").addEventListener("click", (event) =>{
+        sessionStorage.setItem("message_id", 0)
+        navigateTo("/channels")})
+    
+    // 5. the post message button
+    document.querySelector("#post-button2").addEventListener("click", (event) => {
+        event.preventDefault();
+        postMessage("/threads");
+        document.querySelector("#post-box2").value = ""
+    })
+
+    // 6. the post reply button
+    document.querySelector("#reply-button").addEventListener("click", (event) => {
+        event.preventDefault();
+        postReply("/threads");
+        document.querySelector("#reply-box").value = ""
+    })
 
     // "profile" page:
     // 1. log-out button
@@ -184,7 +224,6 @@ function updateUsername(event) {
     }
     else {console.log("not valid")}})
 }
-
 
 function updatePassword(event) {
     event.preventDefault();
@@ -291,7 +330,8 @@ function buildChannels(url) {
         headers: {
             "Content-Type": "application/json",
             "user-id": sessionStorage.getItem("user_id"),
-            "get-type": "list-channels"
+            "get-type": "list-channels",
+            "current-channel": sessionStorage.getItem("channel_id")
         },
         }).then(response => response.json())
         .then(info => {
@@ -313,16 +353,22 @@ function buildChannels(url) {
                     event.preventDefault();
                     sessionStorage.setItem("channel_id", channel_id);
                     sessionStorage.setItem("channel_name", channel_name);
+                    sessionStorage.setItem("message_id", 0)
+                    document.querySelector(".post1").classList.remove("hide")
                 })
                 div.classList.add("channel-option")
                 div.setAttribute("number", channel_id)
                 const name = document.createElement("name");
                 name.innerHTML = channel_name;
                 const space = document.createElement("br");
-                // ADD UNREAD
+                // const unread = document.createElement("unread")
+                
+                // unread.textContent = item.unread + " unread"
+                
 
                 div.appendChild(name);
                 div.appendChild(space);
+                // div.appendChild(unread);
                 block.appendChild(div);
                 
             })}})   
@@ -335,7 +381,8 @@ function buildChannels(url) {
         headers: {
             "Content-Type": "application/json",
             "user-id": sessionStorage.getItem("user_id"),
-            "get-type": "list-channels"
+            "get-type": "list-channels",
+            "current_channel": sessionStorage.getItem("channel_id")
         },
         }).then(response => response.json())
         .then(info => {
@@ -357,6 +404,7 @@ function buildChannels(url) {
                     event.preventDefault();
                     sessionStorage.setItem("channel_id", channel_id);
                     sessionStorage.setItem("channel_name", channel_name);
+                    document.querySelector(".post2").classList.remove("hide")
                 })
                 div.classList.add("channel-option")
                 div.setAttribute("number", channel_id)
@@ -380,7 +428,8 @@ function createNewChannel(channel_name, page) {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "new-name": channel_name
+            "new-name": channel_name,
+            "post-type": "channel"
             },
             }).then(response => { if (response.status == 200) {
             console.log("your channel has been saved")
@@ -393,7 +442,8 @@ function createNewChannel(channel_name, page) {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
-            "new-name": channel_name
+            "new-name": channel_name,
+            "post-type": "channel"
             },
             }).then(response => { if (response.status == 200) {
             console.log("your channel has been saved")
@@ -404,6 +454,516 @@ function createNewChannel(channel_name, page) {
 }
 
 
+function buildMessages(url) {
+    if (url == "channels") {
+        fetch(`/api/channels`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "channel-id": sessionStorage.getItem("channel_id"),
+            "get-type": "list-messages"
+        }
+        }).then(response => response.json())
+        .then(info => {
+            // console.log("YES MESSAGES")
+            const messagesBlock = document.getElementById("messages-2col"); 
+            messagesBlock.innerHTML = ""
+            if (info.length > 0) {
+                info.forEach(i => {
+                    const newMessage = document.createElement("message");
+                    const newAuthor = document.createElement("author");
+                    const newContent = document.createElement("content");
+                    const newImg = document.createElement("img");
+                    const button1 = document.createElement("button");
+                    const button2 = document.createElement("button");
+                    const button3 = document.createElement("button");
+                    const button4 = document.createElement("button");
+                    const button5 = document.createElement("button");
+                    const button6 = document.createElement("button");
+                    const button7 = document.createElement("button");
+                    const newLine = document.createElement("hr");
+                    
+                    newMessage.appendChild(newAuthor);
+                    newMessage.appendChild(newContent);
+                    newMessage.appendChild(newImg);
+                    newMessage.appendChild(button1);
+                    newMessage.appendChild(button2);
+                    newMessage.appendChild(button3);
+                    newMessage.appendChild(button4);
+                    newMessage.appendChild(button5);
+                    newMessage.appendChild(button6);
+                    newMessage.appendChild(button7);
+                    newMessage.appendChild(newLine);
+                    messagesBlock.appendChild(newMessage);
+                
+                    messagesBlock.setAttribute("message_id", i.message_id)
+                    newImg.setAttribute("src", i.img_src)
+                    newContent.textContent = i.body;
+                    newAuthor.textContent = i.author;
+                    //replies button
+                    // if (sessionStorage.getItem("message_id") == i.message_id) {
+                    //     button1.classList.add("selected-thread")
+                    // }
+                    button1.textContent = i.num_replies + " replies"
+                    button1.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        sessionStorage.setItem("message_id", i.message_id)
+                        navigateTo("/threads")
+                    })
+                    
+                    // heart reaction button
+                    num_hearts = i.hearts
+                    button2.textContent =  num_hearts + " " + String.fromCodePoint(0x2764)
+                    button2.classList.add("reaction")
+                    button2.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("hearts", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    // thumbsup reaction button
+                    num_thumbsup = i.thumbsup
+                    button3.textContent =  num_thumbsup + " " +String.fromCodePoint(0x1F44D)
+                    button3.classList.add("reaction")
+                    button3.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsup", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //happyface
+                    button4.textContent =  i.happyface + " " + String.fromCodePoint(0x1F600) 
+                    button4.classList.add("reaction")
+                    button4.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("happyface", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //laughing
+                    button5.textContent =  i.laughing + " " + String.fromCodePoint(0x1F602)
+                    button5.classList.add("reaction")
+                    button5.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("laughing", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //star
+                    button6.textContent = i.star + " " +String.fromCodePoint(0x2B50)
+                    button6.classList.add("reaction")
+                    button6.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("star", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //thumbsdown
+                    button7.textContent = i.thumbsdown + " " + String.fromCodePoint(0x1F44E)
+                    button7.classList.add("reaction")
+                    button7.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsdown", i.message_id, sessionStorage.getItem("user_id"))
+                    }) 
+                  }) 
+        }
+
+     })
+    }
+    if (url == "threads") {
+        fetch(`/api/threads`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "channel-id": sessionStorage.getItem("channel_id"),
+            "get-type": "list-messages"
+        }
+        }).then(response => response.json())
+        .then(info => {
+            // console.log("YES MESSAGES")
+            const messagesBlock = document.getElementById("messages-3col"); 
+            messagesBlock.innerHTML = ""
+            if (info.length > 0) {
+                info.forEach(i => {
+                    const newMessage = document.createElement("message");
+                    const newAuthor = document.createElement("author");
+                    const newContent = document.createElement("content");
+                    const newImg = document.createElement("img");
+                    const button1 = document.createElement("button");
+                    const button2 = document.createElement("button");
+                    const button3 = document.createElement("button");
+                    const button4 = document.createElement("button");
+                    const button5 = document.createElement("button");
+                    const button6 = document.createElement("button");
+                    const button7 = document.createElement("button");
+                    const newLine = document.createElement("hr");
+                    
+                    newMessage.appendChild(newAuthor);
+                    newMessage.appendChild(newContent);
+                    newMessage.appendChild(newImg);
+                    newMessage.appendChild(button1);
+                    newMessage.appendChild(button2);
+                    newMessage.appendChild(button3);
+                    newMessage.appendChild(button4);
+                    newMessage.appendChild(button5);
+                    newMessage.appendChild(button6);
+                    newMessage.appendChild(button7);
+                    newMessage.appendChild(newLine);
+                    messagesBlock.appendChild(newMessage);
+                
+                    messagesBlock.setAttribute("message_id", i.message_id)
+                    newImg.setAttribute("src", i.img_src)
+                    newContent.textContent = i.body;
+                    newAuthor.textContent = i.author;
+                    //replies button
+                    if (sessionStorage.getItem("message_id") == i.message_id) {
+                        button1.classList.add("selected-thread")
+                    }
+                    button1.textContent = i.num_replies + " replies"
+                    button1.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        sessionStorage.setItem("message_id", i.message_id)
+                    })
+                    
+                    // heart reaction button
+                    num_hearts = i.hearts
+                    button2.textContent =  num_hearts + " " + String.fromCodePoint(0x2764)
+                    button2.classList.add("reaction")
+                    button2.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("hearts", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    // thumbsup reaction button
+                    num_thumbsup = i.thumbsup
+                    button3.textContent =  num_thumbsup + " " +String.fromCodePoint(0x1F44D)
+                    button3.classList.add("reaction")
+                    button3.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsup", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //happyface
+                    button4.textContent =  i.happyface + " " + String.fromCodePoint(0x1F600) 
+                    button4.classList.add("reaction")
+                    button4.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("happyface", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //laughing
+                    button5.textContent =  i.laughing + " " + String.fromCodePoint(0x1F602)
+                    button5.classList.add("reaction")
+                    button5.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("laughing", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //star
+                    button6.textContent = i.star + " " +String.fromCodePoint(0x2B50)
+                    button6.classList.add("reaction")
+                    button6.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("star", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //thumbsdown
+                    button7.textContent = i.thumbsdown + " " + String.fromCodePoint(0x1F44E)
+                    button7.classList.add("reaction")
+                    button7.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsdown", i.message_id, sessionStorage.getItem("user_id"))
+                    }) 
+                  }) 
+        }
+
+     })
+    }
+}
+
+
+function postMessage(url) {
+    if (url == "/channels"){
+        post = document.querySelector("#post-box1").value
+
+        fetch(`/api/channels`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "channel-id": sessionStorage.getItem("channel_id"),
+                "user-id": sessionStorage.getItem("user_id"),
+                "post-type": "message"
+            },
+            body: JSON.stringify(post)
+            }).then(response => { if (response.status == 200) {
+                console.log("post made")
+                }
+                else {console.log("something went wrong")}})
+    }
+    if (url == "/threads"){
+        post = document.querySelector("#post-box2").value
+
+        fetch(`/api/threads`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "channel-id": sessionStorage.getItem("channel_id"),
+                "user-id": sessionStorage.getItem("user_id"),
+                "post-type": "message"
+            },
+            body: JSON.stringify(post)
+            }).then(response => { if (response.status == 200) {
+                console.log("post made")
+                }
+                else {console.log("something went wrong")}})
+    }
+}
+
+
+
+
+
+function postReply() {
+    
+    reply = document.querySelector("#reply-box").value
+
+    fetch(`/api/threads`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "channel-id": sessionStorage.getItem("channel_id"),
+            "message-id": sessionStorage.getItem("message_id"),
+            "user-id": sessionStorage.getItem("user_id"),
+            "post-type": "reply"
+        },
+        body: JSON.stringify(reply)
+        }).then(response => { if (response.status == 200) {
+            console.log("post made")
+            }
+            else {console.log("something went wrong")}})
+
+}
+
+
+
+  
+  
+
+
+
+function addReaction(emoji, message_id, user_id) {
+    console.log("adding reaction")
+    if (window.location.pathname.split('/')[1] =="channels") {
+        fetch(`/api/channels`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "emoji": emoji,
+                "message-id": message_id,
+                "user-id": user_id,
+                "post-type": "reaction"
+            },
+            }).then(response => { if (response.status == 200) {
+                console.log("reaction made")
+                }
+                else {console.log("something went wrong")}})
+
+    }
+    if (window.location.pathname.split('/')[1] =="threads") {
+        fetch(`/api/threads`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "emoji": emoji,
+                "message-id": message_id,
+                "user-id": user_id,
+                "post-type": "reaction"
+            },
+            }).then(response => { if (response.status == 200) {
+                console.log("reaction made")
+                }
+                else {console.log("something went wrong")}})
+
+    }
+    
+}
+
+
+function buildReplies() {
+    fetch(`/api/threads`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "channel-id": sessionStorage.getItem("channel_id"),
+            "chat-id":sessionStorage.getItem("message_id"),
+            "get-type": "list-threads"
+        }
+        }).then(response => response.json())
+        .then(info => {
+            // console.log("YES REPLIES")
+            const messagesBlock = document.getElementById("replies-plane"); 
+            messagesBlock.innerHTML = ""
+            if (info.length > 0) {
+                info.forEach(i => {
+                    const newMessage = document.createElement("message");
+                    const newAuthor = document.createElement("author");
+                    const newContent = document.createElement("content");
+                    const newImg = document.createElement("img");
+                    const button2 = document.createElement("button");
+                    const button3 = document.createElement("button");
+                    const button4 = document.createElement("button");
+                    const button5 = document.createElement("button");
+                    const button6 = document.createElement("button");
+                    const button7 = document.createElement("button");
+                    const newLine = document.createElement("hr");
+                    
+                    newMessage.appendChild(newAuthor);
+                    newMessage.appendChild(newContent);
+                    newMessage.appendChild(newImg);
+                    newMessage.appendChild(button2);
+                    newMessage.appendChild(button3);
+                    newMessage.appendChild(button4);
+                    newMessage.appendChild(button5);
+                    newMessage.appendChild(button6);
+                    newMessage.appendChild(button7);
+                    newMessage.appendChild(newLine);
+                    messagesBlock.appendChild(newMessage);
+                
+                    messagesBlock.setAttribute("message_id", i.message_id)
+                    newImg.setAttribute("src", i.img_src)
+                    newContent.textContent = i.body;
+                    newAuthor.textContent = i.author;
+                    
+                    // heart reaction button
+                    num_hearts = i.hearts
+                    button2.textContent =  num_hearts + " " + String.fromCodePoint(0x2764)
+                    button2.classList.add("reaction")
+                    button2.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("hearts", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    // thumbsup reaction button
+                    num_thumbsup = i.thumbsup
+                    button3.textContent =  num_thumbsup + " " +String.fromCodePoint(0x1F44D)
+                    button3.classList.add("reaction")
+                    button3.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsup", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //happyface
+                    button4.textContent =  i.happyface + " " + String.fromCodePoint(0x1F600) 
+                    button4.classList.add("reaction")
+                    button4.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("happyface", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //laughing
+                    button5.textContent =  i.laughing + " " + String.fromCodePoint(0x1F602)
+                    button5.classList.add("reaction")
+                    button5.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("laughing", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //star
+                    button6.textContent = i.star + " " +String.fromCodePoint(0x2B50)
+                    button6.classList.add("reaction")
+                    button6.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("star", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //thumbsdown
+                    button7.textContent = i.thumbsdown + " " + String.fromCodePoint(0x1F44E)
+                    button7.classList.add("reaction")
+                    button7.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsdown", i.message_id, sessionStorage.getItem("user_id"))
+                    }) 
+                  }) 
+        }
+
+     })
+
+}
+
+function headerMessage() {
+    fetch(`/api/threads`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "channel-id": sessionStorage.getItem("channel_id"),
+            "chat-id": sessionStorage.getItem("message_id"),
+            "get-type": "header_message"
+        }
+        }).then(response => response.json())
+        .then(info => {
+            
+            const messagesBlock = document.getElementById("header-three"); 
+            messagesBlock.innerHTML = ""
+            if (info.length > 0) {
+                info.forEach(i => {
+                    const newAuthor = document.createElement("author");
+                    const newContent = document.createElement("content");
+                    const newImg = document.createElement("img");
+                    const button2 = document.createElement("button");
+                    const button3 = document.createElement("button");
+                    const button4 = document.createElement("button");
+                    const button5 = document.createElement("button");
+                    const button6 = document.createElement("button");
+                    const button7 = document.createElement("button");
+                    const newLine = document.createElement("br");
+                    
+                    messagesBlock.appendChild(newAuthor);
+                    messagesBlock.appendChild(newContent);
+                    messagesBlock.appendChild(newImg);
+                    messagesBlock.appendChild(button2);
+                    messagesBlock.appendChild(button3);
+                    messagesBlock.appendChild(button4);
+                    messagesBlock.appendChild(button5);
+                    messagesBlock.appendChild(button6);
+                    messagesBlock.appendChild(button7);
+                    messagesBlock.appendChild(newLine);
+                    
+                    newImg.setAttribute("src", i.img_src)
+                    newContent.textContent = i.body;
+                    newAuthor.textContent = i.author;
+                    
+                    // heart reaction button
+                    num_hearts = i.hearts
+                    button2.textContent =  num_hearts + " " + String.fromCodePoint(0x2764)
+                    button2.classList.add("reaction")
+                    button2.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("hearts", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    // thumbsup reaction button
+                    num_thumbsup = i.thumbsup
+                    button3.textContent =  num_thumbsup + " " +String.fromCodePoint(0x1F44D)
+                    button3.classList.add("reaction")
+                    button3.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsup", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //happyface
+                    button4.textContent =  i.happyface + " " + String.fromCodePoint(0x1F600) 
+                    button4.classList.add("reaction")
+                    button4.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("happyface", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //laughing
+                    button5.textContent =  i.laughing + " " + String.fromCodePoint(0x1F602)
+                    button5.classList.add("reaction")
+                    button5.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("laughing", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //star
+                    button6.textContent = i.star + " " +String.fromCodePoint(0x2B50)
+                    button6.classList.add("reaction")
+                    button6.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("star", i.message_id, sessionStorage.getItem("user_id"))
+                    })
+                    //thumbsdown
+                    button7.textContent = i.thumbsdown + " " + String.fromCodePoint(0x1F44E)
+                    button7.classList.add("reaction")
+                    button7.addEventListener("click", (event) => {
+                        event.preventDefault();
+                        addReaction("thumbsdown", i.message_id, sessionStorage.getItem("user_id"))
+                    }) 
+                  }) 
+        }
+
+     })
+
+
+
+}
 
 
 
@@ -428,11 +988,15 @@ function pollForMessages() {
             if (sessionStorage.getItem("channel_id") != "0") {
                 document.querySelector("#name-2col").innerHTML = sessionStorage.getItem("channel_name")
                 document.querySelector("#name-3col").innerHTML = sessionStorage.getItem("channel_name")
-                // buildMessages(window.location.pathname.split('/')[1]);
+                buildMessages(window.location.pathname.split('/')[1]);
+                if (window.location.pathname.split('/')[1] === "threads") {
+                    headerMessage();
+                    buildReplies();
+                }
             } }
         else {
           clearInterval(intervalId2);
           return;
         }
-      }, 1000);
+      }, 500);
 }

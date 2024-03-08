@@ -24,7 +24,7 @@ create table messages (
 
 create table reactions (
   id INTEGER PRIMARY KEY,
-  emoji VARCHAR(40)
+  emoji VARCHAR(40),
   message_id INTEGER,
   user_id INTEGER,
   FOREIGN KEY(user_id) REFERENCES users(user_id),

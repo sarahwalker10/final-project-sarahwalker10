@@ -151,7 +151,8 @@
         </div>
       </div>
       
-      <div class="right" id="messages-2col">
+      <div class="right">
+      <inside  id="messages-2col">
         <!-- <message>
           <author> Jem</author>
           <content> What's up!!</content>
@@ -189,13 +190,15 @@
           <button> 3 replies </button>
           <hr>
         </message> -->
+      </inside>
         
 
-
-        <!-- <br>
+      <post class="post1 hide">
+        <br>
         <textarea id="post-box1" name="comment" placeholder= "Add a chat to this channel"></textarea>
         <br>
-        <button id="post-button1">Post Message</button> -->
+        <button id="post-button1">Post Message</button>
+      </post>
       </div>
     
   </div>
@@ -218,8 +221,8 @@
       <div id="thread-title"> 
         <button class="reaction" id="exit-threads"> &#x274C; </button>
         <small> Replies To </small>
-        <message>
-          <author> Jem</author>
+        <message id="header-three">
+          <!-- <author> Jem</author>
           <content> What's up!!</content>
           <img>
           <button class="reaction" id="heart"> 0 &#x2764; </button>
@@ -228,8 +231,8 @@
           <button class="reaction" id="laughing"> 2 &#x1F602; </button>
           <button class="reaction" id="star"> 2 &#x2B50; </button>
           <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
-          <br>
-        </message>
+          <br>  -->
+      </message> 
       </div>
 
       <div >
@@ -249,14 +252,15 @@
         </div> -->
         </inside>
         <button id="create-channel2"> &#x2795</button>
-        <div>
+        <div class="hide" id="un-hide2">
           <input id="channel-set2" value="" placeholder="Enter the new channel name">
           <button id="hit-enter2"> Create Channel</button>
         </div>
       </div>
       
       <div class="right">
-        <message>
+      <inside  id="messages-3col">
+        <!-- <message>
           <author> Jem</author>
           <content> What's up!!</content>
           <img>
@@ -292,16 +296,19 @@
           <img>
           <button> 3 replies </button>
           <hr>
-        </message>
+        </message> -->
+      </inside>
+      <post class="post2 hide">
         <br>
         <textarea id="post-box2" name="comment" placeholder= "Add a chat to this channel"></textarea>
         <br>
         <button id="post-button2">Post Message</button>
+      </post>
       </div>
 
       <div class="open-thread">
-        
-        <message>
+        <inside id="replies-plane">
+        <!-- <message>
           <author> Jem</author>
           <content> What's up!!</content>
           <img>
@@ -333,7 +340,8 @@
           <button class="reaction" id="star"> 2 &#x2B50; </button>
           <button class="reaction" id="thumbsdown"> 0 &#x1F44E; </button>
           <hr>
-        </message>
+        </message> -->
+      </inside>
 
         <message> 
           <textarea id="reply-box" name="comment" placeholder= "Add a reply to the thread"></textarea>

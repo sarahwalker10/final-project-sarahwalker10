@@ -158,24 +158,53 @@ def update_profile():
         return jsonify({})
 
 
-#POST a new channel
-#GET a list of channels
+#POST a new channel, or a new message, or a reaction
+#GET a list of channels, or a list of messages
 @app.route('/api/channels', methods = ["POST", "GET"])
 def twoColumnPage():   
     if request.method == "POST":
-        new_channel = request.headers.get('new-name')
-        print(new_channel)
-        #save the new message into the database
-        db = get_db()
-        cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
-        db.commit()
-        cursor.close()
-        return {}
+        if request.headers.get('post-type') == "channel":
+            new_channel = request.headers.get('new-name')
+            print(new_channel)
+            #save the new message into the database
+            db = get_db()
+            cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
+            db.commit()
+            cursor.close()
+            return {}
+        if request.headers.get('post-type') == "message":
+            user_id = request.headers.get('user-id')
+            channel_id = request.headers.get('channel-id')
+            time_entered = str(datetime.now().isoformat())
+            #get the text body
+            body_with_quotations = request.data.decode("utf-8")
+            body_text = body_with_quotations[1:len(body_with_quotations)-1]
+            #save the new message into the database
+            db = get_db()
+            cursor = db.execute("INSERT INTO messages \
+                                (is_reply, user_id, channel_id, body, time_entered) \
+                                VALUES (?, ?, ?, ?, ?)", [0, user_id, channel_id, body_text, time_entered])
+            db.commit()
+            cursor.close()
+            return {}
+            #I need to get the chat id working 
+        if request.headers.get('post-type') == "reaction":
+            emoji = request.headers.get('emoji')
+            user = request.headers.get('user-id')
+            message_id = request.headers.get('message-id')
+            db = get_db()
+            cursor = db.execute("INSERT INTO reactions (emoji, message_id, user_id) VALUES (?, ?, ?)", [emoji, message_id, user])
+            db.commit()
+            cursor.close()
+            return {}
+
     elif request.method == "GET":
         if request.headers.get("get-type") == "list-channels":
+            current_channel = request.headers.get("current-channel")
+            user_id = request.headers.get("user-id")
             channels_list = query_db("SELECT * FROM channels")
             if channels_list is None:
-                return jsonify([{"no channels"}])
+                return jsonify({})
             
             list_of_channels = []
             for row in channels_list:
@@ -192,29 +221,138 @@ def twoColumnPage():
                     channel_name = row["channel_name"]
 
                 row_dict["channel_id"] = channel_id
-                row_dict["channel_name"] = channel_name
-
+                if channel_id == current_channel:
+                    row_dict["unread"] = 0
+                else:
+                    row_dict["unread"] = num_messages_unread(channel_id, user_id, current_channel)
+                row_dict["channel_name"] = channel_name  
                 list_of_channels.append(row_dict)
+
             return jsonify(list_of_channels)
+
+        if request.headers.get("get-type") == "list-messages":
+            channel_id = request.headers.get("channel-id")
+            q = "SELECT * FROM messages LEFT JOIN users ON \
+            messages.user_id = users.user_id WHERE messages.channel_id= ? and messages.is_reply=?"
+            messages_rows = query_db(q, [channel_id, 0])
+            
+            if messages_rows is None:
+                return jsonify({})
+
+            list_of_messages = []
+            for row in messages_rows:
+                row_dict = {}
+
+                #query for the reactions for this message
+                chat_id = int(row["id"])
+                message_reactions = query_db("SELECT * FROM reactions WHERE message_id = ?", [chat_id])
+                reaction_dictionary = create_reaction_dictionary()
+                if message_reactions is not None:
+                    for r in message_reactions:
+                        emoji = r["emoji"]
+                        reaction_dictionary[emoji] +=1
+                        #here I would need to add something about the user who made the reaction
+                row_dict["hearts"] = reaction_dictionary["hearts"]
+                row_dict["laughing"] = reaction_dictionary["laughing"]
+                row_dict["thumbsup"] = reaction_dictionary["thumbsup"]
+                row_dict["thumbsdown"] = reaction_dictionary["thumbsdown"]
+                row_dict["happyface"] = reaction_dictionary["happyface"]
+                row_dict["star"] = reaction_dictionary["star"]
+
+                #query for the number of replies to this message
+                message_replies = query_db("SELECT * FROM messages WHERE chat_id = ? and is_reply =?", [row["id"], 1])
+                if message_replies is None:
+                    num_replies = 0
+                else:
+                    num_replies = len(message_replies)
+                row_dict["num_replies"] = num_replies
+
+                if isinstance(row["username"], bytes):
+                    username = row["username"].decode('utf-8')
+                else:
+                    username = row["username"]
+
+                if isinstance(row["id"], bytes):
+                    message_id = row["id"].decode('utf-8')
+                else:
+                    message_id = row["id"]
+
+                if isinstance(row["body"], bytes):
+                    body = row["body"].decode('utf-8')
+                else:
+                    body = row["body"]
+
+                row_dict["author"] = username
+                row_dict["message_id"] = message_id
+                row_dict["body"] = body
+                row_dict["img_src"] = ""
+                #here I would need to include images 
+
+                list_of_messages.append(row_dict)
+
+            return jsonify(list_of_messages)
+
+
 
 #GET list of channels
 #POST a new channel
 @app.route('/api/threads', methods = ["POST", "GET"])
 def threeColumnPage():   
     if request.method == "POST":
-        new_channel = request.headers.get('new-name')
-        print(new_channel)
-        #save the new message into the database
-        db = get_db()
-        cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
-        db.commit()
-        cursor.close()
-        return {}
+        if request.headers.get('post-type') == "channel":
+            new_channel = request.headers.get('new-name')
+            print(new_channel)
+            #save the new message into the database
+            db = get_db()
+            cursor = db.execute("INSERT INTO channels (channel_name) VALUES (?)", [new_channel])
+            db.commit()
+            cursor.close()
+            return {}
+        if request.headers.get('post-type') == "message":
+            user_id = request.headers.get('user-id')
+            channel_id = request.headers.get('channel-id')
+            time_entered = str(datetime.now().isoformat())
+            #get the text body
+            body_with_quotations = request.data.decode("utf-8")
+            body_text = body_with_quotations[1:len(body_with_quotations)-1]
+            #save the new message into the database
+            db = get_db()
+            cursor = db.execute("INSERT INTO messages \
+                                (is_reply, user_id, channel_id, body, time_entered) \
+                                VALUES (?, ?, ?, ?, ?)", [0, user_id, channel_id, body_text, time_entered])
+            db.commit()
+            cursor.close()
+            return {}
+        if request.headers.get('post-type') == "reaction":
+            emoji = request.headers.get('emoji')
+            user = request.headers.get('user-id')
+            message_id = request.headers.get('message-id')
+            db = get_db()
+            cursor = db.execute("INSERT INTO reactions (emoji, message_id, user_id) VALUES (?, ?, ?)", [emoji, message_id, user])
+            db.commit()
+            cursor.close()
+            return {}
+        if request.headers.get('post-type') == "reply":
+            user_id = request.headers.get('user-id')
+            channel_id = request.headers.get('channel-id')
+            chat_id = request.headers.get('message-id')
+            time_entered = str(datetime.now().isoformat())
+            #get the text body
+            body_with_quotations = request.data.decode("utf-8")
+            body_text = body_with_quotations[1:len(body_with_quotations)-1]
+            #save the new message into the database
+            db = get_db()
+            cursor = db.execute("INSERT INTO messages \
+                                (chat_id, is_reply, user_id, channel_id, body, time_entered) \
+                                VALUES (?, ?, ?, ?, ?, ?)", [chat_id, 1, user_id, channel_id, body_text, time_entered])
+            db.commit()
+            cursor.close()
+            return {}
     elif request.method == "GET":
         if request.headers.get("get-type") == "list-channels":
             channels_list = query_db("SELECT * FROM channels")
             if channels_list is None:
-                return jsonify([{"no channels"}])
+                return jsonify({})
             
             list_of_channels = []
             for row in channels_list:
@@ -236,7 +374,209 @@ def threeColumnPage():
                 list_of_channels.append(row_dict)
             return jsonify(list_of_channels)
 
+        if request.headers.get("get-type") == "list-messages":
+            channel_id = request.headers.get("channel-id")
+            q = "SELECT * FROM messages LEFT JOIN users ON \
+            messages.user_id = users.user_id WHERE messages.channel_id= ? and messages.is_reply=?"
+            messages_rows = query_db(q, [channel_id, 0])
+            
+            if messages_rows is None:
+                return jsonify({})
+
+            list_of_messages = []
+            for row in messages_rows:
+                row_dict = {}
+
+                #query for the reactions for this message
+                chat_id = int(row["id"])
+                message_reactions = query_db("SELECT * FROM reactions WHERE message_id = ?", [chat_id])
+                reaction_dictionary = create_reaction_dictionary()
+                if message_reactions is not None:
+                    for r in message_reactions:
+                        emoji = r["emoji"]
+                        reaction_dictionary[emoji] +=1
+                        #here I would need to add something about the user who made the reaction
+                row_dict["hearts"] = reaction_dictionary["hearts"]
+                row_dict["laughing"] = reaction_dictionary["laughing"]
+                row_dict["thumbsup"] = reaction_dictionary["thumbsup"]
+                row_dict["thumbsdown"] = reaction_dictionary["thumbsdown"]
+                row_dict["happyface"] = reaction_dictionary["happyface"]
+                row_dict["star"] = reaction_dictionary["star"]
+
+                #query for the number of replies to this message
+                message_replies = query_db("SELECT * FROM messages WHERE chat_id = ? and is_reply =?", [row["id"], 1])
+                if message_replies is None:
+                    num_replies = 0
+                else:
+                    num_replies = len(message_replies)
+                row_dict["num_replies"] = num_replies
+
+                if isinstance(row["username"], bytes):
+                    username = row["username"].decode('utf-8')
+                else:
+                    username = row["username"]
+
+                if isinstance(row["id"], bytes):
+                    message_id = row["id"].decode('utf-8')
+                else:
+                    message_id = row["id"]
+
+                if isinstance(row["body"], bytes):
+                    body = row["body"].decode('utf-8')
+                else:
+                    body = row["body"]
+
+                row_dict["author"] = username
+                row_dict["message_id"] = message_id
+                row_dict["body"] = body
+                row_dict["img_src"] = ""
+                #here I would need to include images 
+
+                list_of_messages.append(row_dict)
+
+            return jsonify(list_of_messages)
+
+        if request.headers.get("get-type") == "list-threads":
+            channel_id = request.headers.get("channel-id")
+            chat_id = request.headers.get("chat-id")
+            q = "SELECT * FROM messages LEFT JOIN users ON \
+            messages.user_id = users.user_id WHERE messages.channel_id= ? and messages.is_reply=? and messages.chat_id =?"
+            messages_rows = query_db(q, [channel_id, 1, chat_id])
+            
+            if messages_rows is None:
+                return jsonify({})
+
+            list_of_messages = []
+            for row in messages_rows:
+                row_dict = {}
+
+                #query for the reactions for this message
+                message_id = int(row["id"])
+                message_reactions = query_db("SELECT * FROM reactions WHERE message_id = ?", [message_id])
+                reaction_dictionary = create_reaction_dictionary()
+                if message_reactions is not None:
+                    for r in message_reactions:
+                        emoji = r["emoji"]
+                        reaction_dictionary[emoji] +=1
+                        #here I would need to add something about the user who made the reaction
+                row_dict["hearts"] = reaction_dictionary["hearts"]
+                row_dict["laughing"] = reaction_dictionary["laughing"]
+                row_dict["thumbsup"] = reaction_dictionary["thumbsup"]
+                row_dict["thumbsdown"] = reaction_dictionary["thumbsdown"]
+                row_dict["happyface"] = reaction_dictionary["happyface"]
+                row_dict["star"] = reaction_dictionary["star"]
+
+                #query for the number of replies to this message
+
+                if isinstance(row["username"], bytes):
+                    username = row["username"].decode('utf-8')
+                else:
+                    username = row["username"]
+
+                if isinstance(row["id"], bytes):
+                    message_id = row["id"].decode('utf-8')
+                else:
+                    message_id = row["id"]
+
+                if isinstance(row["body"], bytes):
+                    body = row["body"].decode('utf-8')
+                else:
+                    body = row["body"]
+
+                row_dict["author"] = username
+                row_dict["message_id"] = message_id
+                row_dict["body"] = body
+                row_dict["img_src"] = ""
+                #here I would need to include images 
+
+                list_of_messages.append(row_dict)
+
+            return jsonify(list_of_messages)
+        
+        if request.headers.get("get-type") == "header_message":
+            channel_id = request.headers.get("channel-id")
+            id = request.headers.get("chat-id")
+            q = "SELECT * FROM messages LEFT JOIN users ON \
+            messages.user_id = users.user_id WHERE messages.channel_id= ? and messages.is_reply=? and messages.id =?"
+            messages_rows = query_db(q, [channel_id, 0, id])
+            
+            if messages_rows is None:
+                return jsonify({})
+
+            list_of_messages = []
+            for row in messages_rows:
+                row_dict = {}
+
+                #query for the reactions for this message
+                chat_id = int(row["id"])
+                message_reactions = query_db("SELECT * FROM reactions WHERE message_id = ?", [chat_id])
+                reaction_dictionary = create_reaction_dictionary()
+                if message_reactions is not None:
+                    for r in message_reactions:
+                        emoji = r["emoji"]
+                        reaction_dictionary[emoji] +=1
+                        #here I would need to add something about the user who made the reaction
+                row_dict["hearts"] = reaction_dictionary["hearts"]
+                row_dict["laughing"] = reaction_dictionary["laughing"]
+                row_dict["thumbsup"] = reaction_dictionary["thumbsup"]
+                row_dict["thumbsdown"] = reaction_dictionary["thumbsdown"]
+                row_dict["happyface"] = reaction_dictionary["happyface"]
+                row_dict["star"] = reaction_dictionary["star"]
+
+                if isinstance(row["username"], bytes):
+                    username = row["username"].decode('utf-8')
+                else:
+                    username = row["username"]
+
+                if isinstance(row["id"], bytes):
+                    message_id = row["id"].decode('utf-8')
+                else:
+                    message_id = row["id"]
+
+                if isinstance(row["body"], bytes):
+                    body = row["body"].decode('utf-8')
+                else:
+                    body = row["body"]
+
+                row_dict["author"] = username
+                row_dict["message_id"] = message_id
+                row_dict["body"] = body
+                row_dict["img_src"] = ""
+                #here I would need to include images 
+
+                list_of_messages.append(row_dict)
+
+            return jsonify(list_of_messages)
+
+def create_reaction_dictionary():
+    '''
+    preprocess the dictionary to store the count of all the reactions 
+    '''
+    return {
+        "hearts": 0,
+        "thumbsup": 0,
+        "happyface": 0,
+        "laughing": 0,
+        "star":0,
+        "thumbsdown":0   
+    }
 
 
-current_datetime = datetime.now()
-iso_timestamp = current_datetime.isoformat()
+
+def num_messages_unread(channel_id, user_id, current_channel):
+    '''
+    get the number of unread messages in a channel for the user 
+    '''
+    if channel_id == current_channel:
+        # return 0
+        return "0"
+    else:
+       #need to use my join table
+        return "#"
+        
+
+
+
+
+
+
